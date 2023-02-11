@@ -59,7 +59,7 @@ public class SDKClusterService {
          * @param consumer The consumer of the updates
          * @throws Exception if the registration of the consumer failed.
          */
-        public <T> void addSettingsUpdateConsumer(Setting<T> setting, Consumer<T> consumer) throws Exception {
+        public <T> void addSettingsUpdateConsumer(Setting<T> setting, Consumer<T> consumer) {
             addSettingsUpdateConsumer(Map.of(setting, consumer));
         }
 
@@ -69,7 +69,7 @@ public class SDKClusterService {
          * @param settingUpdateConsumers A map of Setting to Consumer.
          * @throws Exception if the registration of the consumers failed.
          */
-        public void addSettingsUpdateConsumer(Map<Setting<?>, Consumer<?>> settingUpdateConsumers) throws Exception {
+        public void addSettingsUpdateConsumer(Map<Setting<?>, Consumer<?>> settingUpdateConsumers) {
             extensionsRunner.sendAddSettingsUpdateConsumerRequest(extensionsRunner.getExtensionTransportService(), settingUpdateConsumers);
         }
     }
