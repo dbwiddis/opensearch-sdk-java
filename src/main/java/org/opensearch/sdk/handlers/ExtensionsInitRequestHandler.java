@@ -12,12 +12,18 @@ package org.opensearch.sdk.handlers;
 import org.apache.logging.log4j.LogManager;
 
 import org.apache.logging.log4j.Logger;
+import org.opensearch.Version;
+import org.opensearch.cluster.node.DiscoveryNode;
 import org.opensearch.common.settings.Settings;
+import org.opensearch.common.transport.TransportAddress;
 import org.opensearch.discovery.InitializeExtensionRequest;
 import org.opensearch.discovery.InitializeExtensionResponse;
 import org.opensearch.sdk.ExtensionsRunner;
 import org.opensearch.sdk.SDKTransportService;
 import org.opensearch.transport.TransportService;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import static org.opensearch.sdk.ExtensionsRunner.NODE_NAME_SETTING;
 
@@ -47,6 +53,22 @@ public class ExtensionsInitRequestHandler {
      */
     public InitializeExtensionResponse handleExtensionInitRequest(InitializeExtensionRequest extensionInitRequest) {
         logger.info("Registering Extension Request received from OpenSearch");
+        String opensearchAddress = extensionsRunner.getSettings().get("opensearch.address");
+        try {
+            extensionInitRequest = new InitializeExtensionRequest(
+                new DiscoveryNode(
+                    "",
+                    new TransportAddress(
+                        InetAddress.getByName(opensearchAddress),
+                        extensionInitRequest.getSourceNode().getAddress().getPort()
+                    ),
+                    Version.CURRENT
+                ),
+                extensionInitRequest.getExtension()
+            );
+        } catch (UnknownHostException e) {
+            // this is a hack so we just fail with original code...
+        }
         extensionsRunner.opensearchNode = extensionInitRequest.getSourceNode();
         extensionsRunner.getThreadPool().getThreadContext().putHeader("extension_unique_id", extensionInitRequest.getExtension().getId());
         extensionsRunner.setUniqueId(extensionInitRequest.getExtension().getId());

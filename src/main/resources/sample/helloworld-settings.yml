@@ -1,7 +1,7 @@
 extensionName: hello-world
-hostAddress: 127.0.0.1
+hostAddress: 0.0.0.0
 hostPort: 4532
-opensearchAddress: 127.0.0.1
+opensearchAddress: xxxx
 opensearchPort: 9200
 #ssl.transport.enabled: true
 #ssl.transport.pemcert_filepath: certs/extension-01.pem
